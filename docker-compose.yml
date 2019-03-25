@@ -10,7 +10,7 @@ services:
       -"3333:3322"
     volumes:
       -"./mariadb.conf:/etc/mysql/conf.d/config-file.cnf"
-      -"./data:/var/lib/mysql:rw"
+      -"./db/data:/var/lib/mysql:rw"
 
   flask:
     build: ./flask
