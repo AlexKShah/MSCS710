@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 
 services:
   mariadb:
@@ -7,11 +7,10 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: limon
     ports:
-      -"3333:3322"
+      ["3333:3322"]
     volumes:
-      -"./mariadb.conf:/etc/mysql/conf.d/config-file.cnf"
-      -"./db/data:/var/lib/mysql:rw"
+      ["./mariadb.conf:/etc/mysql/conf.d/config-file.cnf", "./db/data:/var/lib/mysql:rw"]
 
   flask:
     build: ./flask
-    ports: "8080:80"
+    ports: ["8080:80"]
