@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM python:latest
 
 RUN apt-get update -y && \
     apt-get install -y python3.3 python-dev python-pip && \
@@ -7,5 +7,5 @@ RUN apt-get update -y && \
 COPY ./flask /flask
 WORKDIR /flask
 ENTRYPOINT ["python"]
-CMD ["flasktest.py"]
-EXPOSE 8080
+CMD ["flask", "run", "--host=0.0.0.0"]
+EXPOSE 5000
