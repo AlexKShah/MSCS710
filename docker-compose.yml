@@ -11,6 +11,6 @@ services:
     volumes:
       ["./mariadb.conf:/etc/mysql/conf.d/config-file.cnf", "./db/data:/var/lib/mysql:rw"]
 
-  flask_web:
+  flask:
     build: ./flask
     ports: ["5000:5000"]
