@@ -8,3 +8,4 @@ COPY ./flask /flask
 WORKDIR /flask
 ENTRYPOINT ["python"]
 CMD ["flasktest.py"]
+EXPOSE 8080
