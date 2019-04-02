@@ -9,6 +9,6 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./flask /flask
 WORKDIR /flask
 ENTRYPOINT ["python"]
-CMD ["flasktest.py"]
+CMD ["run.py"]
 CMD ["/usr/bin/supervisord"]
 EXPOSE 5000
