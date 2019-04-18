@@ -1,0 +1,11 @@
+poll_db: "poll"
+archive_db: "archive_poll"
+log_dir: "logs"
+poll_every: 10
+time_zone: "America/New_York"
+log_dir: "logs"
+process_in_parallel: False
+keep_existing: False
+db_username: "root"
+db_password: "alex"
+

@@ -21,7 +21,6 @@ __version__ = "0.1"
 """
 TODOs:
   * currently not using --time_zone
-  * not putting items in database yet
   * add error handling
   * parallel processing not working on alex server
 """
@@ -73,7 +72,7 @@ class sys_poll():
   def __init__(self,
                cli_args):
     self.cli_args = cli_args
-    self.table_names = ("current", "archive")
+    self.table_names = "current"
     self.poll_db = database_obj(user=self.cli_args["db_username"],
                                 password=self.cli_args["db_password"],
                                 database=self.cli_args["poll_db"],
@@ -100,7 +99,7 @@ class sys_poll():
     """
     pid, metrics = args
     p_metrics = {metric: getattr(pid, metric)() for metric in metrics if hasattr(pid, metric)} 
-    p_metrics["current_time"] = str(datetime.datetime.now())
+    p_metrics["nowtime"] = str(datetime.datetime.now())
     p_metrics["pid"] = pid.pid
     return p_metrics
   # end
@@ -188,14 +187,20 @@ class sys_poll():
                               for process_objs, metrics_ in list(zip(process_objs, repeat(metrics, len(process_objs))))]
     all_process_metrics = pd.DataFrame(all_process_metrics)
 
-    for table in self.table_names:
-      if not self.poll_db.check_table_exists(table):
-        cols = [] # TODO add unique identifier
-        for key in all_process_metrics.keys():
-          if key == "current_time": cols.append(str(key) + " datetime")
-          else: cols.append(str(key) + " varchar(255)")
-        self.poll_db.create_table(table, ", ".join(cols)) # create current table
-    #all_process_metrics 
+    if not self.poll_db.check_table_exists(self.table_names):
+      cols = [] # TODO add unique identifier
+      for key in all_process_metrics.keys():
+        if key == "nowtime": cols.append(str(key) + " datetime")
+        else: cols.append(str(key) + " varchar(255)")
+      cols = ", ".join(cols)
+      self.poll_db.create_table(self.table_names, cols) # create current table
+
+    keys = list(all_process_metrics.keys())
+    #vals = list(all_process_metrics.itertuples(index=False, name=None))
+    vals = list(zip(*[all_process_metrics[k].values.tolist() for k in keys]))
+    self.poll_db.insert_into_table(self.table_names,
+                                   ", ".join(keys),
+                                   vals)
   # end
 # end
 

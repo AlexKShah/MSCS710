@@ -15,7 +15,8 @@ class database_obj():
       self._mk_connection()
       # case where not using existing and something is there
       if not keep_existing and self.check_db_exists(self.database):
-        self.drop_db(self.database)
+        self._drop_db(self.database)
+        self._create_db()
       # case where nothing is there
       elif not self.check_db_exists(self.database):
         self._create_db()
@@ -43,8 +44,9 @@ class database_obj():
   def create_table(self,
                    table_name: str,
                    cols: str):
+    cols =  "id int NOT NULL AUTO_INCREMENT, "+cols+", PRIMARY KEY (id)" 
     self.cursor.execute("CREATE TABLE {} ({})".format(table_name,
-                                                      cols_dtypes))
+                                                      cols))
   # end
 
   def check_db_exists(self,
@@ -74,10 +76,11 @@ class database_obj():
                         table_name: str,
                         cols: list,
                         vals: list):
-    # https://www.w3schools.com/python/python_mysql_insert.asp
     sql = "INSERT INTO {} ({}) VALUES ({})".format(table_name,
                                                    cols,
-                                                   "%s, "*len(cols))
+                                                   str("%s, "*len(vals[0]))[:-2])
+    print(vals)
+    print(sql)
     self.cursor.executemany(sql, vals)
     self.mariadb_connection.commit()
     print(self.cursor.rowcount, "were inserted") # TODO turn this into a logging statement
@@ -90,7 +93,7 @@ class database_obj():
     return self.cursor.fetchall()
   # end
 
-  def drop_db(self,
+  def _drop_db(self,
               db_name: str):
     use_statement = "USE {}".format(db_name)
     show_tables_statement = "SHOW TABLES"
@@ -98,14 +101,13 @@ class database_obj():
     self.cursor.execute(use_statement)
     self.cursor.execute(show_tables_statement)
     for table in self.cursor:
-      self.drop_table(table[0])
+      self._drop_table(table[0])
     self.cursor.execute(drop_db_statement)
   # end
 
-  def drop_table(self,
+  def _drop_table(self,
                  table_name: str):
     drop_tables_statement = "DROP TABLES {}".format(table_name)
     self.cursor.execute(drop_tables_statement)
   # end
-
 # end
