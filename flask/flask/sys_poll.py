@@ -64,6 +64,10 @@ def get_args():
                       help="database password",
                       type=str,
                       default="alex")
+  parser.add_argument("--delete_interval",
+                      help="how often to remove records (mintues)",
+                      type=int,
+                      default=60)
   args = parser.parse_args()
   return args
 # end
@@ -73,6 +77,7 @@ class sys_poll():
                cli_args):
     self.cli_args = cli_args
     self.table_names = "current"
+    self.delete_interval = self.cli_args["delete_interval"]
     self.poll_db = database_obj(user=self.cli_args["db_username"],
                                 password=self.cli_args["db_password"],
                                 database=self.cli_args["poll_db"],
@@ -163,7 +168,8 @@ class sys_poll():
     desc: get system information by process
     returns: pandas dataframe with system metrics by process id
     """
-    logger, queue_listener, queue = self.logger_init(os.path.join(os.getcwd(), self.cli_args["log_dir"]),
+    logger, queue_listener, queue = self.logger_init(os.path.join(os.getcwd(),
+                                                                  self.cli_args["log_dir"]),
                                                      filename="sys_poll")
     """
     note: to add more metrics simply go through https://psutil.readthedocs.io/en/latest/
@@ -196,11 +202,13 @@ class sys_poll():
       self.poll_db.create_table(self.table_names, cols) # create current table
 
     keys = list(all_process_metrics.keys())
-    #vals = list(all_process_metrics.itertuples(index=False, name=None))
     vals = list(zip(*[all_process_metrics[k].values.tolist() for k in keys]))
     self.poll_db.insert_into_table(self.table_names,
                                    ", ".join(keys),
                                    vals)
+    self.poll_db.delete_from_table(self.table_names,
+                                   "nowtime",
+                                   self.delete_interval)
   # end
 # end
 

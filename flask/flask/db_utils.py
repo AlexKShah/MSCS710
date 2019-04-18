@@ -79,11 +79,19 @@ class database_obj():
     sql = "INSERT INTO {} ({}) VALUES ({})".format(table_name,
                                                    cols,
                                                    str("%s, "*len(vals[0]))[:-2])
-    print(vals)
-    print(sql)
     self.cursor.executemany(sql, vals)
     self.mariadb_connection.commit()
-    print(self.cursor.rowcount, "were inserted") # TODO turn this into a logging statement
+    print(self.cursor.rowcount, "were inserted")
+  # end
+
+  def delete_from_table(self,
+                        table_name: str,
+                        delete_interval: int,
+                        date_col: str):
+    sql = "DELETE FROM {} WHERE {} < (NOW() - INTERVAL {} MINUTE)".format(table_name,
+                                                                         date_col,
+                                                                         delete_interval)
+    self.cursor.execute(sql)
   # end
 
   def select_from_table(self,

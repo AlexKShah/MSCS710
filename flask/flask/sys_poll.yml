@@ -8,4 +8,5 @@ process_in_parallel: False
 keep_existing: False
 db_username: "root"
 db_password: "alex"
+delete_interval: 60
 
