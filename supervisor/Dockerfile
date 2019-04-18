@@ -1,13 +1,12 @@
 FROM ubuntu:latest
 
 RUN        apt update && \
-           apt install -y supervisor
-RUN        apt-get -y install supervisor && \
-           mkdir -p /var/log/supervisor && \
-           mkdir -p /etc/supervisor/conf.d
-RUN        mkdir /var/log/supervisord
+           apt-get -y install supervisor && \
+           mkdir -p /etc/supervisor/conf.d && \
+           chmod 777 /etc/supervisor/conf.d/
 
-COPY       supervisord.conf /
-COPY       supervisord.log /
+COPY       supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+RUN        chmod 777 /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/usr/bin/supervisord"]

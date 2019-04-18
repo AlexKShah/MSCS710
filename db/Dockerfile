@@ -1,6 +1,5 @@
 FROM mariadb:latest
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./db /db
 WORKDIR /db
 

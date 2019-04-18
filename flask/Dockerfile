@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 RUN apt-get update -y && \
-    apt-get install -y python3.7 python-dev python-pip build-essential supervisor && \
+    apt-get install -y python3.7 python-dev python-pip && \
     pip install psutil flask mysql-connector-python
 
 COPY ./flask /flask
