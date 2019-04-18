@@ -1,9 +1,7 @@
-version: '3'
-
+version: "3.3"
 services:
   mariadb:
     image: mariadb:latest
-    dockerfile: Dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: limon
@@ -13,7 +11,8 @@ services:
       ["./mariadb.conf:/etc/mysql/conf.d/config-file.cnf", "./db/data:/var/lib/mysql:rw"]
     
   flask:
-    dockerfile: Dockerfile.test
-    build: ./flask
-    ports: ["5000:5000"]
-    add: tests.sh /flask
+    ports:
+      ["5000:5000"]
+    build:
+      context: ./flask
+      dockerfile: Dockerfile.test
