@@ -12,6 +12,7 @@ import datetime
 from itertools import repeat
 import schedule
 import time
+import yaml
 
 from db_utils import database_obj
 
@@ -25,63 +26,21 @@ TODOs:
   * parallel processing not working on alex server
 """
 
-def get_args():
-  """
-  desc: get cli arguments
-  returns:
-  args: dictionary of cli arguments
-  """
-  parser = argparse.ArgumentParser(description="this script pull sys information")
-  parser.add_argument("--poll_every",
-                      help="how often (seconds) to poll system information",
-                      type=int,
-                      default=10)
-  parser.add_argument("--time_zone",
-                      help="specify the time zone of the machine to gather sys information from",
-                      type=str,
-                      default="America/New_York")
-  parser.add_argument("--log_dir",
-                      help="directory to write logs to",
-                      type=str,
-                      default="logs")
-  parser.add_argument("--process_in_parallel",
-                      help="use parallel processing where appropiate",
-                      type=bool,
-                      default=False)
-  parser.add_argument("--poll_db",
-                      help="database to write recently polled data",
-                      type=str,
-                      default="poll")
-  parser.add_argument("--keep_existing",
-                      help="keep existing database",
-                      type=bool,
-                      default=False)
-  parser.add_argument("--db_username",
-                      help="database user name",
-                      type=str,
-                      default="root")
-  parser.add_argument("--db_password",
-                      help="database password",
-                      type=str,
-                      default="alex")
-  parser.add_argument("--delete_interval",
-                      help="how often to remove records (mintues)",
-                      type=int,
-                      default=60)
-  args = parser.parse_args()
-  return args
-# end
-
 class sys_poll():
   def __init__(self,
-               cli_args):
-    self.cli_args = cli_args
+               config_args):
+    self.config_args = config_args
+    self.log_dir = os.path.join(os.path.curdir, self.config_args["log_dir"])
     self.table_names = "current"
-    self.delete_interval = self.cli_args["delete_interval"]
-    self.poll_db = database_obj(user=self.cli_args["db_username"],
-                                password=self.cli_args["db_password"],
-                                database=self.cli_args["poll_db"],
-                                keep_existing=self.cli_args["keep_existing"])
+    self.delete_interval = self.config_args["delete_interval"]
+    self.metrics = self.config_args["metrics"]
+    self.logger, self.queue_listener, self.queue = self.logger_init(self.log_dir,
+                                                                    filename="sys_poll")
+    self.poll_db = database_obj(user=self.config_args["db_username"],
+                                password=self.config_args["db_password"],
+                                database=self.config_args["poll_db"],
+                                keep_existing=self.config_args["keep_existing"],
+                                logger=self.logger)
   # end
 
   def get_processes(self):
@@ -168,29 +127,18 @@ class sys_poll():
     desc: get system information by process
     returns: pandas dataframe with system metrics by process id
     """
-    logger, queue_listener, queue = self.logger_init(os.path.join(os.getcwd(),
-                                                                  self.cli_args["log_dir"]),
-                                                     filename="sys_poll")
-    """
-    note: to add more metrics simply go through https://psutil.readthedocs.io/en/latest/
-          find methods on Process object and add to `metrics` list below
-    """
-    metrics = ["memory_percent",
-               "cpu_percent",
-               "num_threads",
-               "name"] # list of metrics to call on psutil.Process object
     pids = list(map(int, self.get_processes()))
     process_objs = [psutil.Process(pid) for pid in pids]
 
-    if self.cli_args["process_in_parallel"]:
-      pool = Pool(os.cpu_count(), self.worker_init, [queue])
-      all_process_metrics = [process_metrics for process_metrics in pool.map(self.get_process_metrics, list(zip(process_objs, repeat(metrics, len(process_objs)))))]
+    if self.config_args["process_in_parallel"]:
+      pool = Pool(os.cpu_count(), self.worker_init, [self.queue])
+      all_process_metrics = [process_metrics for process_metrics in pool.map(self.get_process_metrics, list(zip(process_objs, repeat(self.metrics, len(process_objs)))))]
       pool.close()
       pool.join()
-      queue_listener.stop()
+      self.queue_listener.stop()
     else:
       all_process_metrics = [self.get_process_metrics([process_objs, metrics_])
-                              for process_objs, metrics_ in list(zip(process_objs, repeat(metrics, len(process_objs))))]
+                              for process_objs, metrics_ in list(zip(process_objs, repeat(self.metrics, len(process_objs))))]
     all_process_metrics = pd.DataFrame(all_process_metrics)
 
     if not self.poll_db.check_table_exists(self.table_names):
@@ -201,6 +149,7 @@ class sys_poll():
       cols = ", ".join(cols)
       self.poll_db.create_table(self.table_names, cols) # create current table
 
+    self.logger.info("TEST")
     keys = list(all_process_metrics.keys())
     vals = list(zip(*[all_process_metrics[k].values.tolist() for k in keys]))
     self.poll_db.insert_into_table(self.table_names,
@@ -213,11 +162,14 @@ class sys_poll():
 # end
 
 if __name__ == "__main__":
-  args = get_args()
-  sys_poll_obj = sys_poll(vars(args))
-
-  schedule.every(args.poll_every).seconds.do(sys_poll_obj.main)
+  args = yaml.load(open("sys_poll.yml", "r"))
+  sys_poll_obj = sys_poll(args)
+  schedule.every(args["poll_every"]).seconds.do(sys_poll_obj.main)
 
   while True:
-    schedule.run_pending()
-    time.sleep(1)
+    try:
+      schedule.run_pending()
+      time.sleep(1)
+    except Exception as e:
+      self.logger.error(e)
+      pass

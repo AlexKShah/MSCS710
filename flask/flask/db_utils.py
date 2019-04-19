@@ -8,10 +8,12 @@ class database_obj():
                user: str,
                password: str,
                database: str,
-               keep_existing: bool):
+               keep_existing: bool,
+               logger):
       self.user = user
       self.password = password
       self.database = database
+      self.logger = logger
       self._mk_connection()
       # case where not using existing and something is there
       if not keep_existing and self.check_db_exists(self.database):
@@ -39,6 +41,7 @@ class database_obj():
                                               passwd=self.password,
                                               database=self.database)
     self.cursor = self.mariadb_connection.cursor()
+    self.logger.info("creating database: {}".format(self.database))
   # end
 
   def create_table(self,
@@ -47,6 +50,7 @@ class database_obj():
     cols =  "id int NOT NULL AUTO_INCREMENT, "+cols+", PRIMARY KEY (id)" 
     self.cursor.execute("CREATE TABLE {} ({})".format(table_name,
                                                       cols))
+    self.logger.info("creating table: {}".format(table_name))
   # end
 
   def check_db_exists(self,
@@ -56,6 +60,7 @@ class database_obj():
     found = False
     for database in self.cursor:
       if database[0] == db_name:
+          self.logger.info("database: {} exists".format(db_name))
           found = True
     return found
   # end
@@ -68,6 +73,7 @@ class database_obj():
     found = False
     for table in self.cursor:
       if table[0] == table_name:
+          self.logger.info("table: {} exists".format(table_name))
           found = True
     return found
   # end
@@ -81,7 +87,7 @@ class database_obj():
                                                    str("%s, "*len(vals[0]))[:-2])
     self.cursor.executemany(sql, vals)
     self.mariadb_connection.commit()
-    print(self.cursor.rowcount, "were inserted")
+    self.logger.info("{} were inserted".format(self.cursor.rowcount))
   # end
 
   def delete_from_table(self,
@@ -92,6 +98,7 @@ class database_obj():
                                                                          date_col,
                                                                          delete_interval)
     self.cursor.execute(sql)
+    self.logger.info("deleted records older than: {}".format(delete_interval))
   # end
 
   def select_from_table(self,
@@ -111,11 +118,13 @@ class database_obj():
     for table in self.cursor:
       self._drop_table(table[0])
     self.cursor.execute(drop_db_statement)
+    self.logger.info("dropped database: {}".format(db_name))
   # end
 
   def _drop_table(self,
                  table_name: str):
     drop_tables_statement = "DROP TABLES {}".format(table_name)
     self.cursor.execute(drop_tables_statement)
+    self.logger.info("dropped table: {}".format(table_name))
   # end
 # end
