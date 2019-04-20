@@ -1,4 +1,5 @@
 import mysql.connector as mariadb
+import pytest
 
 __author__ = "StevenGuarino"
 __version__ = "0.1"
@@ -22,7 +23,7 @@ class database_obj():
       # case where nothing is there
       elif not self.check_db_exists(self.database):
         self._create_db()
-      # case where something is there and we are keeping 
+      # case where something is there and we are keeping
       elif keep_existing and self.check_db_exists(self.database):
         self.mariadb_connection = mariadb.connect(user=self.user,
                                                   passwd=self.password,
@@ -34,7 +35,7 @@ class database_obj():
                                               passwd=self.password)
     self.cursor = self.mariadb_connection.cursor()
   # end
- 
+
   def _create_db(self):
     self.cursor.execute("CREATE DATABASE {}".format(self.database))
     self.mariadb_connection = mariadb.connect(user=self.user,
@@ -47,7 +48,7 @@ class database_obj():
   def create_table(self,
                    table_name: str,
                    cols: str):
-    cols =  "id int NOT NULL AUTO_INCREMENT, "+cols+", PRIMARY KEY (id)" 
+    cols =  "id int NOT NULL AUTO_INCREMENT, "+cols+", PRIMARY KEY (id)"
     self.cursor.execute("CREATE TABLE {} ({})".format(table_name,
                                                       cols))
     self.logger.info("creating table: {}".format(table_name))

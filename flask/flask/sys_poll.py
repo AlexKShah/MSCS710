@@ -13,6 +13,7 @@ from itertools import repeat
 import schedule
 import time
 import yaml
+import pytest
 
 from db_utils import database_obj
 
@@ -62,7 +63,7 @@ class sys_poll():
     returns: dict of metrics for a process id
     """
     pid, metrics = args
-    p_metrics = {metric: getattr(pid, metric)() for metric in metrics if hasattr(pid, metric)} 
+    p_metrics = {metric: getattr(pid, metric)() for metric in metrics if hasattr(pid, metric)}
     p_metrics["nowtime"] = str(datetime.datetime.now())
     p_metrics["pid"] = pid.pid
     return p_metrics
@@ -72,7 +73,7 @@ class sys_poll():
                   queue):
     """
     desc: init for worker for logging during multiprocessing
-    args: 
+    args:
       queue: queue for logging
     """
     # all records from worker processes go to qh and then into q
@@ -88,8 +89,8 @@ class sys_poll():
     """
     desc: create logger
     args:
-      path: path to logging directory 
-      filename: log filename 
+      path: path to logging directory
+      filename: log filename
     returns:
       logger
       queue_listener
@@ -99,11 +100,11 @@ class sys_poll():
     # handler for all log records
     handler = logging.StreamHandler()
     handler.setFormatter(logging.Formatter("%(levelname)s: %(asctime)s - %(process)s - %(message)s"))
-  
+
     # queue_listener gets records from the queue and sends them to the handler
     queue_listener = QueueListener(queue, handler)
     queue_listener.start()
-  
+
     # currentTime = str(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
     if not os.path.exists(path):
       os.mkdir(path)
@@ -112,13 +113,13 @@ class sys_poll():
                         format='%(asctime)s %(levelname)s %(message)s',
                         filename=logFileName,
                         filemode='w')
-  
+
     logger = logging.getLogger()
-  
+
     logger.setLevel(logging.INFO)
     # add the handler to the logger so records from this process are handled
     logger.addHandler(handler)
-  
+
     return logger, queue_listener, queue
   # end
 
@@ -161,7 +162,66 @@ class sys_poll():
   # end
 # end
 
+  def test_main(self, args):
+      """
+      desc: get system information by process
+      returns: pandas dataframe with system metrics by process id
+      """
+      pids = list(map(int, self.get_processes()))
+
+      # @test
+      assert (isinstance(pid, int) for pid in pids), "pid not integers"
+      #
+
+      process_objs = [psutil.Process(pid) for pid in pids]
+      all_process_metrics = [self.get_process_metrics([process_objs, metrics_]) for process_objs, metrics_ in list(zip(process_objs, repeat(self.metrics, len(process_objs))))]
+      all_process_metrics = pd.DataFrame(all_process_metrics)
+
+      # @test
+      ## TODO which part of dataframe has metric names
+      for key in all_process_metrics.keys():
+          if key == "memory_percent":
+              assert (all_process_metrics[key] >=0 && <=100 for vals in all_process_metrics[key].values.tolist()), "memory percent out of range '>=0 && <=100'"
+          if key == "cpu_percent":
+              assert (all_process_metrics[key] >=0 && <=100 for vals in all_process_metrics[key].values.tolist()), "CPU percent out of range '>=0 && <=100'"
+          if key == "num_threads":
+              assert (all_process_metrics[key] >=0##TODO && <=100 for vals in all_process_metrics[key].values.tolist()), "memory percent out of range '>=0 && <=100'"
+          if key == "name":
+              ##TODO assert (all_process_metrics[key])
+      #
+
+      if not self.poll_db.check_table_exists(self.table_names):
+        cols = [] # TODO add unique identifier
+        for key in all_process_metrics.keys():
+          if key == "nowtime": cols.append(str(key) + " datetime")
+          else: cols.append(str(key) + " varchar(255)")
+        cols = ", ".join(cols)
+        self.poll_db.create_table(self.table_names, cols) # create current table
+
+      self.logger.info("TEST")
+      keys = list(all_process_metrics.keys())
+      vals = list(zip(*[all_process_metrics[k].values.tolist() for k in keys]))
+      self.poll_db.insert_into_table(self.table_names,
+                                     ", ".join(keys),
+                                     vals)
+      self.poll_db.delete_from_table(self.table_names,
+                                     "nowtime",
+                                     self.delete_interval)
+
 if __name__ == "__main__":
+  args = yaml.load(open("sys_poll.yml", "r"))
+  sys_poll_obj = sys_poll(args)
+  schedule.every(args["poll_every"]).seconds.do(sys_poll_obj.main)
+
+  while True:
+    try:
+      schedule.run_pending()
+      time.sleep(1)
+    except Exception as e:
+      self.logger.error(e)
+      pass
+
+if __name__ == "__test_main__":
   args = yaml.load(open("sys_poll.yml", "r"))
   sys_poll_obj = sys_poll(args)
   schedule.every(args["poll_every"]).seconds.do(sys_poll_obj.main)
