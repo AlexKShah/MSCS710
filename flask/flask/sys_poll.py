@@ -161,7 +161,7 @@ class sys_poll():
                                    self.delete_interval)
   # end
 # end
-
+  @pytest.mark.testmain
   def test_main(self, args):
       """
       desc: get system information by process
@@ -181,15 +181,15 @@ class sys_poll():
       ## TODO which part of dataframe has metric names
       for key in all_process_metrics.keys():
           if key == "memory_percent":
-              assert (all_process_metrics[key] >=0 && <=100 for vals in all_process_metrics[key].values.tolist()), "memory percent out of range '>=0 && <=100'"
+              assert 1==0, "memory percent out of range '>=0 & <=100'"
           if key == "cpu_percent":
-              assert (all_process_metrics[key] >=0 && <=100 for vals in all_process_metrics[key].values.tolist()), "CPU percent out of range '>=0 && <=100'"
+              assert 1==1, "CPU percent out of range '>=0 & <= 100'" #num threads*100?
           if key == "num_threads":
-              assert (all_process_metrics[key] >=0##TODO && <=100 for vals in all_process_metrics[key].values.tolist()), "memory percent out of range '>=0 && <=100'"
+              assert 1==0, "num threads out of range '>=0 & <=100'"
           if key == "name":
+              assert 1==0, "name not found"
               ##TODO assert (all_process_metrics[key])
       #
-
       if not self.poll_db.check_table_exists(self.table_names):
         cols = [] # TODO add unique identifier
         for key in all_process_metrics.keys():
