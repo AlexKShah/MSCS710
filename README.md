@@ -12,7 +12,7 @@ Docker (17+)
 docker-compose (1.13+)
 
 ## Installation
-0. Clone the repository to the machine you want to monitor with:
+0. Clone the repository on the machine you want to monitor:
 
 `git clone https://github.com/AlexKShah/MSCS710.git; cd MSCS710;`
 
