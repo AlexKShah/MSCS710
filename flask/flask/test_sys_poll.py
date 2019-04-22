@@ -179,6 +179,3 @@ def test_metrics_min_num_threads():
   if "num_threads" in all_process_metric.keys():
     assert(all_process_metric["num_threads"] >= 1)
 # end
-
-if __name__ == "__main__":
-  test_metrics_is_int()
