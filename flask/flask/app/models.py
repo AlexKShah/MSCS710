@@ -8,7 +8,7 @@ class User(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-class metric(db.Model):
+class Metric(db.Model):
     pid = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     memory_percent = db.Column(db.String(255))
