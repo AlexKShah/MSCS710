@@ -6,7 +6,9 @@ log_dir: "logs" # directory to write logs to
 process_in_parallel: False # use parallel processing where appropiate
 keep_existing: False # keep existing database
 db_username: "root" # database user name
-db_password: "alex" # database password
+db_password: "alex" # database password (this shouldn't be stored as plain text)
+db_host: "localhost" # ip address for the database
+db_port:  3306 # port for the database (3306 is default)
 delete_interval: 60 # how often to remove records (mintues)
 ###
 # note: to add more metrics simply go through https://psutil.readthedocs.io/en/latest/
@@ -16,4 +18,3 @@ metrics: ["memory_percent",
           "cpu_percent",
           "num_threads",
           "name"]
-

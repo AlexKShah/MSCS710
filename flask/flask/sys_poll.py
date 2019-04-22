@@ -13,7 +13,6 @@ from itertools import repeat
 import schedule
 import time
 import yaml
-import pytest
 
 from db_utils import database_obj
 
@@ -23,7 +22,6 @@ __version__ = "0.1"
 """
 TODOs:
   * currently not using --time_zone
-  * add error handling
   * parallel processing not working on alex server
 """
 
@@ -37,7 +35,9 @@ class sys_poll():
     self.metrics = self.config_args["metrics"]
     self.logger, self.queue_listener, self.queue = self.logger_init(self.log_dir,
                                                                     filename="sys_poll")
-    self.poll_db = database_obj(user=self.config_args["db_username"],
+    self.poll_db = database_obj(host=self.config_args["db_host"],
+                                port=self.config_args["db_port"],
+                                user=self.config_args["db_username"],
                                 password=self.config_args["db_password"],
                                 database=self.config_args["poll_db"],
                                 keep_existing=self.config_args["keep_existing"],
@@ -161,67 +161,8 @@ class sys_poll():
                                    self.delete_interval)
   # end
 # end
-  @pytest.mark.testmain
-  def test_main(self, args):
-      """
-      desc: get system information by process
-      returns: pandas dataframe with system metrics by process id
-      """
-      pids = list(map(int, self.get_processes()))
-
-      # @test
-      assert (isinstance(pid, int) for pid in pids), "pid not integers"
-      #
-
-      process_objs = [psutil.Process(pid) for pid in pids]
-      all_process_metrics = [self.get_process_metrics([process_objs, metrics_]) for process_objs, metrics_ in list(zip(process_objs, repeat(self.metrics, len(process_objs))))]
-      all_process_metrics = pd.DataFrame(all_process_metrics)
-
-      # @test
-      ## TODO which part of dataframe has metric names
-      for key in all_process_metrics.keys():
-          if key == "memory_percent":
-              assert 1==0, "memory percent out of range '>=0 & <=100'"
-          if key == "cpu_percent":
-              assert 1==1, "CPU percent out of range '>=0 & <= 100'" #num threads*100?
-          if key == "num_threads":
-              assert 1==0, "num threads out of range '>=0 & <=100'"
-          if key == "name":
-              assert 1==0, "name not found"
-              ##TODO assert (all_process_metrics[key])
-      #
-      if not self.poll_db.check_table_exists(self.table_names):
-        cols = [] # TODO add unique identifier
-        for key in all_process_metrics.keys():
-          if key == "nowtime": cols.append(str(key) + " datetime")
-          else: cols.append(str(key) + " varchar(255)")
-        cols = ", ".join(cols)
-        self.poll_db.create_table(self.table_names, cols) # create current table
-
-      self.logger.info("TEST")
-      keys = list(all_process_metrics.keys())
-      vals = list(zip(*[all_process_metrics[k].values.tolist() for k in keys]))
-      self.poll_db.insert_into_table(self.table_names,
-                                     ", ".join(keys),
-                                     vals)
-      self.poll_db.delete_from_table(self.table_names,
-                                     "nowtime",
-                                     self.delete_interval)
 
 if __name__ == "__main__":
-  args = yaml.load(open("sys_poll.yml", "r"))
-  sys_poll_obj = sys_poll(args)
-  schedule.every(args["poll_every"]).seconds.do(sys_poll_obj.main)
-
-  while True:
-    try:
-      schedule.run_pending()
-      time.sleep(1)
-    except Exception as e:
-      self.logger.error(e)
-      pass
-
-if __name__ == "__test_main__":
   args = yaml.load(open("sys_poll.yml", "r"))
   sys_poll_obj = sys_poll(args)
   schedule.every(args["poll_every"]).seconds.do(sys_poll_obj.main)

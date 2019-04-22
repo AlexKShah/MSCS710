@@ -6,11 +6,15 @@ __version__ = "0.1"
 
 class database_obj():
   def __init__(self,
+               host: str,
+               port: int,
                user: str,
                password: str,
                database: str,
                keep_existing: bool,
                logger):
+      self.host = host
+      self.port = port
       self.user = user
       self.password = password
       self.database = database
@@ -25,20 +29,27 @@ class database_obj():
         self._create_db()
       # case where something is there and we are keeping
       elif keep_existing and self.check_db_exists(self.database):
-        self.mariadb_connection = mariadb.connect(user=self.user,
+        # TODO port and ip address
+        self.mariadb_connection = mariadb.connect(host=self.host,
+                                                  port=self.port,
+                                                  user=self.user,
                                                   passwd=self.password,
                                                   database=self.database)
   # end
 
   def _mk_connection(self):
-    self.mariadb_connection = mariadb.connect(user=self.user,
+    self.mariadb_connection = mariadb.connect(host=self.host,
+                                              port=self.port,
+                                              user=self.user,
                                               passwd=self.password)
     self.cursor = self.mariadb_connection.cursor()
   # end
 
   def _create_db(self):
     self.cursor.execute("CREATE DATABASE {}".format(self.database))
-    self.mariadb_connection = mariadb.connect(user=self.user,
+    self.mariadb_connection = mariadb.connect(host=self.host,
+                                              port=self.port,
+                                              user=self.user,
                                               passwd=self.password,
                                               database=self.database)
     self.cursor = self.mariadb_connection.cursor()
