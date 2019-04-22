@@ -11,7 +11,7 @@ services:
      ports:
       ["3306:3306"]
     volumes:
-      ["./mariadb.conf:/etc/mysql/conf.d/config-file.cnf", "./db/data:/var/lib/mysql:rw"]
+      ["./db/mariadb.conf:/etc/mysql/conf.d/config-file.cnf", "./db/data:/var/lib/mysql:rw"]
 
   flask:
     networks:

@@ -1,6 +1,5 @@
 from flask import Flask, send_from_directory
-from config import Config
-import flask_sqlalchemy
+from flask_sqlalchemy import SQLAlchemy
 import os
 import yaml
 import pathlib
@@ -8,7 +7,7 @@ import pathlib
 app = Flask(__name__, static_url_path='')
 
 # get database parameters from config
-with open("../sys_poll.yml", 'r') as configfile:
+with open("sys_poll.yml", 'r') as configfile:
     cfg = yaml.safe_load(configfile)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + cfg['db_username'] + ':'+ cfg['db_password'] + '@' + cfg['db_host'] + '/' + cfg['poll_db']
 db = SQLAlchemy(app)

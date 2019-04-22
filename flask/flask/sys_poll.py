@@ -14,7 +14,7 @@ import schedule
 import time
 import yaml
 
-from db_utils import database_obj
+from db_utils import Database_obj
 
 __author__ = "StevenGuarino"
 __version__ = "0.1"
@@ -25,21 +25,21 @@ TODOs:
   * parallel processing not working on alex server
 """
 
-class sys_poll():
+class Sys_poll():
   def __init__(self,
                config_args):
     self.config_args = config_args
     self.log_dir = os.path.join(os.path.curdir, self.config_args["log_dir"])
-    self.table_names = "current"
+    self.table_names = self.config_args["db_table_name"]
     self.delete_interval = self.config_args["delete_interval"]
     self.metrics = self.config_args["metrics"]
     self.logger, self.queue_listener, self.queue = self.logger_init(self.log_dir,
                                                                     filename="sys_poll")
-    self.poll_db = database_obj(host=self.config_args["db_host"],
+    self.poll_db = Database_obj(host=self.config_args["db_host"],
                                 port=self.config_args["db_port"],
                                 user=self.config_args["db_username"],
                                 password=self.config_args["db_password"],
-                                database=self.config_args["poll_db"],
+                                database=self.config_args["db_name"],
                                 keep_existing=self.config_args["keep_existing"],
                                 logger=self.logger)
   # end
@@ -150,7 +150,6 @@ class sys_poll():
       cols = ", ".join(cols)
       self.poll_db.create_table(self.table_names, cols) # create current table
 
-    self.logger.info("TEST")
     keys = list(all_process_metrics.keys())
     vals = list(zip(*[all_process_metrics[k].values.tolist() for k in keys]))
     self.poll_db.insert_into_table(self.table_names,
@@ -164,7 +163,7 @@ class sys_poll():
 
 if __name__ == "__main__":
   args = yaml.load(open("sys_poll.yml", "r"))
-  sys_poll_obj = sys_poll(args)
+  sys_poll_obj = Sys_poll(args)
   schedule.every(args["poll_every"]).seconds.do(sys_poll_obj.main)
 
   while True:

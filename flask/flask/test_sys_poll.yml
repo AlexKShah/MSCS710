@@ -1,10 +1,10 @@
-log_dir: "logs" # directory to write logs to
+log_dir: "test_logs" # directory to write logs to
 poll_every: 10 # how often (seconds) to poll system information
 time_zone: "America/New_York" # specify the time zone of the machine to gather sys information from
 process_in_parallel: False # use parallel processing where appropiate
 keep_existing: False # keep existing database
-db_name: "poll" # database to write recently polled data
-db_table_name: "metrics" # database to write recently polled data
+db_name: "test_poll" # database to write recently polled data
+db_table_name: "test_metrics" # database to write recently polled data
 db_username: "root" # database user name
 db_password: "alex" # database password (this shouldn't be stored as plain text)
 db_host: "localhost" # ip address for the database
