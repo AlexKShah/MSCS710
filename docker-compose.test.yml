@@ -4,12 +4,12 @@ services:
     image: mariadb:latest
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: limon
+      MYSQL_DATABASE: poll
     ports:
-      ["3333:3333"]
+      ["3306:3306"]
     volumes:
       ["./mariadb.conf:/etc/mysql/conf.d/config-file.cnf", "./db/data:/var/lib/mysql:rw"]
-    
+
   flask:
     links:
      - mariadb
