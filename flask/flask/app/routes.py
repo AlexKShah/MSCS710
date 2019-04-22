@@ -1,7 +1,8 @@
 from urlparse import urlparse, urljoin
-import Flask
+from flask import Flask
 import flask-login
 import flask-mysql
+import flask-wtf
 
 __author__ = "AlexKShah"
 __version__ = "0.1"
@@ -22,17 +23,20 @@ login_manager.session_protection = "strong"
 def load_user(user_id):
     return User.get(user_id)
 
-@app.route('/index')
+@app.route('/index.html')
 @login_required
 def index():
     return render_template('index.html')
 
-@app.route('/config')
+@app.route('/config.html', methods=['GET', 'POST'])
 @login_required
 def config():
+    form = LoginForm()
+    if form.validate_on_submit():
+        # TODO submit config data from forms
     return render_template('config.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login.html', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -42,7 +46,7 @@ def login():
         if not is_safe_url(next):
             return flask.abort(400)
         return flask.redirect(next or flask.url_for('index'))
-    return flask.render_template('login.html, form=form')
+    return flask.render_template('pages/login.html, form=form')
 
 @app.route("/logout")
 @login_required
@@ -73,5 +77,8 @@ def redirect_back(endpoint, **values):
     if not target or not is_safe_url(target):
         target = url_for(endpoint, **values)
     return redirect(target)
+
+if __name__ == '__main__':
+    app.run()
 
 url_for('static', filename='style.css')
