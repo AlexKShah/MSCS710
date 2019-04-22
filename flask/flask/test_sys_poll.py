@@ -90,8 +90,6 @@ def test_delete_from_table():
                                                before_results_id[0][0])
   after_results_id = sys_poll_obj.poll_db.select_from_table(sys_poll_obj.table_names,
                                                             ["id"])
-  print(before_results_id)
-  print(after_results_id)
   assert(before_results_id[0][0] not in after_results_id)
 # end
 
