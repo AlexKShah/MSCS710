@@ -5,12 +5,16 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: poll
+    networks:
+     - appnet
     ports:
       ["3306:3306"]
     volumes:
       ["./mariadb.conf:/etc/mysql/conf.d/config-file.cnf", "./db/data:/var/lib/mysql:rw"]
 
   flask:
+    networks:
+     - appnet
     links:
      - mariadb
     ports:
@@ -18,3 +22,6 @@ services:
     build:
       context: ./flask
       dockerfile: Dockerfile.test
+
+networks:
+  appnet:
