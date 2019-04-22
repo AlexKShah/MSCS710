@@ -1,18 +1,12 @@
 from flask import Flask, send_from_directory
+from config import Config
+from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__, static_url_path='')
 
-@app.route('/bower_components/<path:path>')
-def send_bower(path):
-    return send_from_directory(os.path.join(app.root_path, 'bower_components'), path)
+# TODO get database name and pass from config
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@localhost/mysql'
+db = SQLAlchemy(app)
 
-@app.route('/dist/<path:path>')
-def send_dist(path):
-    return send_from_directory(os.path.join(app.root_path, 'dist'), path)
-
-@app.route('/js/<path:path>')
-def send_js(path):
-    return send_from_directory(os.path.join(app.root_path, 'js'), path)
-
-from app import views
+from app import views, routes, models
