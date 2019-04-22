@@ -4,7 +4,7 @@ import pytest
 __author__ = "StevenGuarino"
 __version__ = "0.1"
 
-class database_obj():
+class Database_obj():
   def __init__(self,
                host: str,
                port: int,
@@ -97,6 +97,7 @@ class database_obj():
     sql = "INSERT INTO {} ({}) VALUES ({})".format(table_name,
                                                    cols,
                                                    str("%s, "*len(vals[0]))[:-2])
+    print(sql)
     self.cursor.executemany(sql, vals)
     self.mariadb_connection.commit()
     self.logger.info("{} were inserted".format(self.cursor.rowcount))
@@ -111,6 +112,17 @@ class database_obj():
                                                                          delete_interval)
     self.cursor.execute(sql)
     self.logger.info("deleted records older than: {}".format(delete_interval))
+  # end
+
+  def delete_by_id_from_table(self,
+                              table_name: str,
+                              col: int,
+                              id_: str):
+    sql = "DELETE FROM {} WHERE {}={}".format(table_name,
+                                              col,
+                                              id_)
+    self.cursor.execute(sql)
+    self.logger.info("deleted records with id: {}".format(id_))
   # end
 
   def select_from_table(self,
