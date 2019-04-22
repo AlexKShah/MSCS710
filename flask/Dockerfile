@@ -2,8 +2,10 @@
 FROM ubuntu:latest
 
 RUN apt-get update -y && \
-    apt-get install -y supervisor python3 python3-dev python3-pip && \
-    pip3 install psutil gunicorn flask flask-login flask-mysql mysql-connector-python pandas schedule pyyaml pytest
+    apt-get install -y supervisor python3 python3-dev python3-pip python3-venv && \
+    python3 -m venv venv && \
+    . venv/bin/activate && \
+    pip3 install psutil gunicorn flask flask-login flask-mysql Flask-SQLAlchemy mysql-connector-python pandas schedule pyyaml pytest
 
 COPY ./flask /flask
 WORKDIR /flask
