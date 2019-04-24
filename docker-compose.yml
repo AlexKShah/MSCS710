@@ -3,21 +3,22 @@ version: '3'
 services:
   mariadb:
     image: mariadb:latest
+    build: ./db
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: poll
     networks:
      - appnet
      ports:
-      ["3306:3306"]
+      ["3333:3306"]
     volumes:
-      ["./db/mariadb.conf:/etc/mysql/conf.d/config-file.cnf", "./db/data:/var/lib/mysql:rw"]
+      ["./db/db/conf:/etc/mysql/conf.d/", "./db/db/data:/var/lib/mysql:rw"]
 
   flask:
     networks:
      - appnet
     build: ./flask
-    ports: ["5000:5000"]
+    ports: ["80:5000"]
     links:
       - mariadb
 
