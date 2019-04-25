@@ -26,5 +26,4 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 #CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 #CMD ["/bin/sh", "-c", "while true; do echo 'running...'; sleep 180; done"]
 
-#run tests
 CMD ["bash", "tests.sh"]

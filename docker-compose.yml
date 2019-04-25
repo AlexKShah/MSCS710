@@ -5,6 +5,8 @@ services:
     build: ./limon
     ports: ["5000:5000"]
     container_name: limon
+    volumes:
+      - /proc:/proc
 
   mysql:
     image: mysql:latest
