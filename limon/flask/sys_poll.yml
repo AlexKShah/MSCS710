@@ -5,12 +5,14 @@ process_in_parallel: False # use parallel processing where appropiate
 keep_existing: False # keep existing database
 db_name: "poll" # database to write recently polled data
 db_table_name: "metrics" # database to write recently polled data
-db_username: "alex" # database user name
-db_password: "password" # database password (this shouldn't be stored as plain text)
-db_host: "localhost" # ip address for the database
+db_username: "root" # database user name
+db_password: "root" # database password (this shouldn't be stored as plain text)
+db_host: "mysql" # ip address for the database
 db_port:  3306 # port for the database (3306 is default)
 delete_interval: 60 # how often to remove records (mintues)
 ###
+#sudo docker run -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=poll -e MYSQL_USER=alex mysql
+
 # note: to add more metrics simply go through https://psutil.readthedocs.io/en/latest/
 # find methods on Process object and add to `metrics` list below
 ###

@@ -171,5 +171,5 @@ if __name__ == "__main__":
       schedule.run_pending()
       time.sleep(1)
     except Exception as e:
-      self.logger.error(e)
+      sys_poll_obj.logger.error(e)
       pass

@@ -3,4 +3,16 @@ version: '3'
 services:
   limon:
     build: ./limon
-    ports: ["5000:5000","3306:3306"]
+    ports: ["5000:5000"]
+    container_name: limon
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    ports: ["3306:3306"]
+    environment:
+      MYSQL_USER: "root"
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_PASSWORD: ""
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
