@@ -1,7 +1,4 @@
-from urlparse import urlparse, urljoin
-from flask import Flask
-import flask_mysql
-import flask_wtf
+from flask import Flask, render_template
 
 __author__ = "AlexKShah"
 __version__ = "0.1"
@@ -20,14 +17,8 @@ def index():
     return render_template('index.html')
 
 @app.route('/config.html', methods=['GET', 'POST'])
-@login_required
 def config():
-    form = LoginForm()
-    if form.validate_on_submit():
-        # TODO submit config data from forms
     return render_template('config.html')
 
 if __name__ == '__main__':
-    app.run()
-
-url_for('static', filename='style.css')
+    app.run(debug=TRUE)
