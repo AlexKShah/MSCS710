@@ -1,9 +1,10 @@
 FROM ubuntu:latest
 
 RUN apt-get update -y && \
-    apt-get install -y curl supervisor python3 python3-dev python3-pip python3-venv software-properties-common && \
-    pip3 install psutil gunicorn flask flask-login flask-mysql Flask-SQLAlchemy mysql-connector-python pandas schedule pyyaml pytest pandas numpy
-
+    apt-get install -y nodejs npm git curl supervisor python3 python3-dev python3-pip python3-venv software-properties-common && \
+    pip3 install psutil gunicorn flask flask-login flask-mysql Flask-SQLAlchemy mysql-connector-python pandas schedule pyyaml pytest pandas numpy && \
+    npm install -g bower && \
+    bower install --allow-root chartist
 COPY ./flask /flask
 WORKDIR /flask
 
