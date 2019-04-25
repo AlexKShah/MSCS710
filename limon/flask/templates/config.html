@@ -10,5 +10,12 @@
 <body>
   <script src="dist/chartist.min.js"></script>
   <h1>Config</h1>
+  <form action = "http://localhost:5000/result" method = "POST">
+         <p>Get metrics every (sec) <input type = "text" name = "poll_every" /></p>
+         <p>Time Zone <input type = "text" name = "time_zone" /></p>
+         <p>Delete old metrics after (min)<input type = "text" name = "delete_interval" /></p>
+         <p>Keep existing database on start <input type ="text" name = "keep_existing" /></p>
+         <p><input type = "submit" value = "submit" /></p>
+      </form>
 </body>
 </html>

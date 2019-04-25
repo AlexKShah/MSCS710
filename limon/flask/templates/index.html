@@ -9,6 +9,16 @@
 </head>
 <body>
   <script src="dist/chartist.min.js"></script>
+  {{
+  import yaml, json, io
+
+  with open("sys_poll.yml", 'r') as stream:
+      try:
+          yml_loaded = yaml.safe_load(stream)
+          json_loaded = json.load(stream)
+      except yaml.YAMLError as exc:
+          print(exc)
+  }}
   <h1>Index</h1>
 </body>
 </html>
