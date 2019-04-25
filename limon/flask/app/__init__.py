@@ -5,6 +5,7 @@ import yaml
 import pathlib
 
 app = Flask(__name__, static_url_path='')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # get database parameters from config
 with open("sys_poll.yml", 'r') as configfile:

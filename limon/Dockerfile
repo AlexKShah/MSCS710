@@ -11,11 +11,7 @@ WORKDIR /flask
 #expose flask port
 EXPOSE 5000
 
-#prep flask startup
-ENV FLASK_APP run.py
-
 # supervisor setup
-
 # make supervisor directories
 RUN    mkdir -p /var/log/supervisor && \
        mkdir -p /etc/supervisor/conf.d
@@ -25,4 +21,3 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # launch supervisor, make it use local conf file
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-CMD ["/bin/bash", "-c", "sleep 10; python3 sys_poll.py"]
