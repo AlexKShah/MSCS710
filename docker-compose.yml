@@ -1,6 +1,26 @@
 version: '3'
 
 services:
-  limon:
-    build: ./limon
-    ports: ["5000:5000","3306:3306"]
+  mariadb:
+    image: mariadb:latest
+    build: ./db
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: poll
+    networks:
+     - appnet
+     ports:
+      ["3333:3306"]
+    volumes:
+      ["./db/db/conf:/etc/mysql/conf.d/", "./db/db/data:/var/lib/mysql:rw"]
+
+  flask:
+    networks:
+     - appnet
+    build: ./flask
+    ports: ["80:5000"]
+    links:
+      - mariadb
+
+networks:
+  appnet:

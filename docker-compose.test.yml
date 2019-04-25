@@ -1,8 +1,27 @@
 version: "3.3"
 services:
-  limon:
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: poll
+    networks:
+     - appnet
     ports:
-      ["5000:5000","3306:3306"]
+      ["3306:3306"]
+    volumes:
+      ["./db/mariadb.conf:/etc/mysql/conf.d/config-file.cnf", "./db/data:/var/lib/mysql:rw"]
+
+  flask:
+    networks:
+     - appnet
+    links:
+     - mariadb
+    ports:
+      ["5000:5000"]
     build:
-      context: ./limon
+      context: ./flask
       dockerfile: Dockerfile.test
+
+networks:
+  appnet:
