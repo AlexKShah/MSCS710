@@ -18,30 +18,27 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + cfg['db_username'] + ':'+ c
 db = SQLAlchemy(app)
 
 class Metrics(db.Model):
-    cpu_percent = db.Column(db.String(255))
-    memory_percent = db.Column(db.String(255))
+    cpu_percent = db.Column(db.Float())
+    memory_percent = db.Column(db.Float())
     name = db.Column(db.String(255))
-    timestamp = db.Column(db.DateTime, index=True, default=str(datetime.datetime.now()))
-    num_threads = db.Column(db.String(255))
+    num_threads = db.Column(db.Integer)
     pid = db.Column(db.Integer, primary_key=True)
 
     def __init__(self, cpu_percent, memory_percent, name, timestamp, num_threads, pid):
         self.cpu_percent = cpu_percent
         self.memory_percent = memory_percent
         self.name = name
-        self.timestamp = timestamp
         self. num_threads = num_threads
         self.pid = pid
 
     def __repr__(self):
-        return '<{} {} {} {} {} {}>'.format(self.cpu_percent, self.memory_percent, self.name, self.timestamp, self.num_threads, self.pid)
+        return '<{} {} {} {} {}>'.format(self.cpu_percent, self.memory_percent, self.name, self.num_threads, self.pid)
+
 #end class
 
 @app.route('/')
 def index():
     data = Metrics.query.all()
-    for process in data:
-        print(process)
     return render_template('index.html', data=data)
 
 @app.route('/config.html', methods=['GET', 'POST'])
