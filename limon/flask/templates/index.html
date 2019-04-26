@@ -9,16 +9,30 @@
 </head>
 <body>
   <script src="dist/chartist.min.js"></script>
-  {{
-  import yaml, json, io
-
-  with open("sys_poll.yml", 'r') as stream:
-      try:
-          yml_loaded = yaml.safe_load(stream)
-          json_loaded = json.load(stream)
-      except yaml.YAMLError as exc:
-          print(exc)
-  }}
-  <h1>Index</h1>
+  <h1>Dashboard</h1>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>pid</th>
+            <th>cpu percent</th>
+            <th>memory percent</th>
+            <th># threads</th>
+            <th>timestamp</th>
+        <tr>
+    </thead>
+    <tbody>
+        {% for process in data %}
+        <tr>
+            <td>{{ process.name }}</td>
+            <td>{{ process.pid }}</td>
+            <td>{{ process.cpu_percent }}</td>
+            <td>{{ process.memory_percent }}</td>
+            <td>{{ process.num_threads }}</td>
+            <td>{{ process.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 </body>
 </html>

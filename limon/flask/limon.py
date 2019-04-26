@@ -1,6 +1,7 @@
 #!flask/bin/python
 from flask import Flask, render_template, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
+import sqlalchemy
 import os
 import yaml
 import pathlib
@@ -16,7 +17,7 @@ with open("sys_poll.yml", 'r') as configfile:
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + cfg['db_username'] + ':'+ cfg['db_password'] + '@' + cfg['db_host'] + '/poll'
 db = SQLAlchemy(app)
 
-class Metric(db.Model):
+class Metrics(db.Model):
     cpu_percent = db.Column(db.String(255))
     memory_percent = db.Column(db.String(255))
     name = db.Column(db.String(255))
@@ -24,17 +25,28 @@ class Metric(db.Model):
     num_threads = db.Column(db.String(255))
     pid = db.Column(db.Integer, primary_key=True)
 
+    def __init__(self, cpu_percent, memory_percent, name, timestamp, num_threads, pid):
+        self.cpu_percent = cpu_percent
+        self.memory_percent = memory_percent
+        self.name = name
+        self.timestamp = timestamp
+        self. num_threads = num_threads
+        self.pid = pid
+
     def __repr__(self):
-        return '<Metric {}>'.format(self.body)
+        return '<{} {} {} {} {} {}>'.format(self.cpu_percent, self.memory_percent, self.name, self.timestamp, self.num_threads, self.pid)
 #end class
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    data = Metrics.query.all()
+    for process in data:
+        print(process)
+    return render_template('index.html', data=data)
 
 @app.route('/config.html', methods=['GET', 'POST'])
 def config():
     return render_template('config.html')
 
 if __name__ == "__main__":
-    app.run(host = '0.0.0.0',port=5000)
+    app.run(host = '0.0.0.0',port=5000,DEBUG=TRUE)

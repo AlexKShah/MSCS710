@@ -1,8 +1,13 @@
 FROM ubuntu:latest
 
+#apt cache to build faster
+RUN touch /etc/apt/apt.conf.d/00aptproxy && \
+    echo 'Acquire::http::Proxy "http://192.168.1.10:3142";' | tee /etc/apt/apt.conf.d/00aptproxy
+
 RUN apt-get update -y && \
-    apt-get install -y curl supervisor python3 python3-dev python3-pip python3-venv software-properties-common && \
-    pip3 install psutil gunicorn flask flask-login flask-mysql Flask-SQLAlchemy mysql-connector-python pandas schedule pyyaml pytest pandas numpy
+    apt-get install -y curl libmysqlclient-dev supervisor python3 python3-dev python3-pip python3-venv software-properties-common && \
+    pip3 install psutil gunicorn mysqlclient flask flask-login flask-mysql Flask-SQLAlchemy sqlalchemy mysql-connector-python pandas schedule pyyaml pytest pandas numpy
+
 COPY ./flask /flask
 WORKDIR /flask
 
