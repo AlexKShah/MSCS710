@@ -1,19 +1,19 @@
-# Limón : Linux Monitor
+# Limón: Linux Monitor
 ### Alex Shah & Steven Guarino
 ### MSCS 710 Spring 2019
 
 ---
 
 # About
-### Limón is a docker based resource monitoring tool for Linux.  
+### Limón is a Docker based resource monitoring tool for Linux.  
 ### Run Limón on the device you want to monitor, access it in any browser.
 
 <img src="img/block.png" height="561px" width="930px" align="center">
 
 # Requirements:
 Ubuntu LTS (18.04+)  
-Docker( 17+)  
-docker-compose (1.13+)  
+Docker (17+)  
+Docker-Compose (1.13+)  
 
 # Installation
 * Clone the repository on the machine you want to monitor:
