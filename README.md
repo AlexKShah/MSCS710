@@ -12,24 +12,18 @@ Docker (17+)
 docker-compose (1.13+)
 
 ## Installation
-* Clone the repository on the machine you want to monitor:
+0. Clone the repository on the machine you want to monitor:
 
-      git clone https://github.com/AlexKShah/MSCS710.git; cd MSCS710;
+`git clone https://github.com/AlexKShah/MSCS710.git; cd MSCS710;`
 
-* Setup:
+1. Install dependencies:
 
-      sudo apt update && sudo apt install -y docker docker-compose
+`sudo apt update && sudo apt install -y docker docker-compose`
 
-      ln -s /proc /path/to/repo/proc
-* Build:
+2. Build
 
-      sudo docker-compose up --build
+`sudo docker-compose up --build`
 
-* Monitor
+3. Monitor
 
-     Navigate to `machineIP:5000` in a browser
-
-## Configuration
-* Modify parameters like how often to gather metrics at:
-    
-      limon/flask/sys_poll.yml
+Navigate to `machineIP:5000` in a browser
