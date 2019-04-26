@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='dist/chartist.css') }}">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='dist/bootstrap.css') }}">
     <title>Limon</title>
@@ -12,71 +12,48 @@
   <script src="{{ url_for('static',filename='dist/chartist.js') }}"></script>
   <script src="{{ url_for('static',filename='dist/bootstrap.js') }}"></script>
 
-  <h1>Dashboard</h1>
-  <p> RAM = {{ramnow}}%</p>
-  <p> CPU = {{cpunow}}%</p>
+  <div class="container">
 
-    <div class="ct-chart ct-golden-section" id="chart1"></div>
-    <div class="ct-chart ct-golden-section" id="chart2"></div>
-  <script type="text/javascript">
-      var mychart;
+    <h1 class="center-block mt-4">Dashboard</h1>
 
-      new Chartist.Pie('#chart1', {
-        labels: ["CPU"]
-        series: [{{cpunow}}]
-      }, {
-        donut: true,
-        donutWidth: 60,
-        startAngle: 270,
-        total: 100,
-        showLabel: true
-      });
-      var data = {
-        labels: ["CPU"]
-        series: [{{cpunow}}]
-      };
-    mychart = new Chartist.Pie('chart1', data);
+    <div class="ct-chart" id="chart1"></div>
 
-      var mychart2;
+    <script type="text/javascript">
+        new Chartist.Pie('#chart1', {
+          series: [{{cpunow}}, {{ramnow}}]
+        }, {
+          width: '200px',
+          height: '200px',
+          donut: true,
+          donutWidth: 40,
+          startAngle: 270,
+          total: 100,
+          showLabel: false
+        });
+    </script>
 
-      new Chartist.Pie('#chart2', {
-        labels: ["RAM"]
-        series: [{{ramnow}}]
-      }, {
-        donut: true,
-        donutWidth: 60,
-        startAngle: 270,
-        total: 100,
-        showLabel: true
-      });
-      var data = {
-        labels: ["RAM"]
-        series: [{{ramnow}}]
-      };
-    mychart2 = new Chartist.Pie('chart2', data);
-  </script>
-
-  <div class='table'>
-    <table class="table">
-      <thead>
-          <tr>
-              <th>name</th>
-              <th>pid</th>
-              <th>memory percent</th>
-              <th># threads</th>
-          <tr>
-      </thead>
-      <tbody>
-          {% for process in data %}
-          <tr>
-              <td><b>{{ process.name }}</b></td>
-              <td>{{ process.pid }}</td>
-              <td>{{ process.memory_percent}}%</td>
-              <td>{{ process.num_threads }}</td>
-          </tr>
-          {% endfor %}
-      </tbody>
-    </table>
+    <div class='table'>
+      <table class="table">
+        <thead>
+            <tr>
+                <th>name</th>
+                <th>pid</th>
+                <th>memory percent</th>
+                <th># threads</th>
+            <tr>
+        </thead>
+        <tbody>
+            {% for process in data %}
+            <tr>
+                <td><b>{{ process.name }}</b></td>
+                <td>{{ process.pid }}</td>
+                <td>{{ process.memory_percent}}%</td>
+                <td>{{ process.num_threads }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </body>
 </html>
