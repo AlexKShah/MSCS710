@@ -38,7 +38,7 @@ class Metrics(db.Model):
 
 @app.route('/')
 def index():
-    data = Metrics.query.all()
+    data = Metrics.query.distinct()
     return render_template('index.html', data=data)
 
 @app.route('/config.html', methods=['GET', 'POST'])
