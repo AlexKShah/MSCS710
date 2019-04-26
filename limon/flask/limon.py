@@ -6,6 +6,7 @@ import os
 import yaml
 import pathlib
 import datetime
+import psutil
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -38,8 +39,10 @@ class Metrics(db.Model):
 
 @app.route('/')
 def index():
+    cpunow = psutil.cpu_percent(interval=1)
+    ramnow = psutil.virtual_memory()[2]
     data = Metrics.query.distinct()
-    return render_template('index.html', data=data)
+    return render_template('index.html', data=data, cpunow=cpunow, ramnow=ramnow)
 
 @app.route('/config.html', methods=['GET', 'POST'])
 def config():
