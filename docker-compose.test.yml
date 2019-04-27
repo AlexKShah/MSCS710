@@ -2,7 +2,9 @@ version: '3.3'
 
 services:
   limon:
-    build: ./limon
+    build:
+      context: ./limon
+      dockerfile: Dockerfile.test
     ports: ["5000:5000"]
     container_name: limon
     volumes:
@@ -16,8 +18,3 @@ services:
       #values changed on first run
       MYSQL_USER: "root"
       MYSQL_ROOT_PASSWORD: "root"
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
-    build:
-      context: ./limon
-      dockerfile: Dockerfile.test
