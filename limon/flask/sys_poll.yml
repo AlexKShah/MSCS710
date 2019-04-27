@@ -1,17 +1,15 @@
-log_dir: "logs" # directory to write logs to
-poll_every: 10 # how often (seconds) to poll system information
-time_zone: "America/New_York" # specify the time zone of the machine to gather sys information from
-process_in_parallel: False # use parallel processing where appropiate
-keep_existing: False # keep existing database
-db_name: "poll" # database to write recently polled data
-db_table_name: "metrics" # database to write recently polled data
-db_username: "root" # database user name
-db_password: "root" # database password (this shouldn't be stored as plain text)
-db_host: "mysql" # ip address for the database
-db_port:  3306 # port for the database (3306 is default)
-delete_interval: 60 # how often to remove records (mintues)
+log_dir: "logs"          # directory name to write logs to
+poll_every: 10           # how often (seconds) to poll system information
+keep_existing: False     # should we keep existing database?
+db_name: "poll"          # database to write recently polled data
+db_table_name: "metrics" # table to write recently polled data
+db_username: "root"      # database user name
+db_password: "root"      # database password
+db_host: "mysql"         # hostname for the database
+db_port:  3306           # port for the database (3306 is default)
+delete_interval: 60      # how often to remove records (minutes)
 ###
-# note: to add more metrics simply go through https://psutil.readthedocs.io/en/latest/
+# note: to add more metrics go to https://psutil.readthedocs.io/en/latest/
 # find methods on Process object and add to `metrics` list below
 ###
 metrics: ["memory_percent",
