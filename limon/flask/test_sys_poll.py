@@ -21,13 +21,13 @@ __version__ = "0.1"
 """
 
 def test_db_created():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   assert(sys_poll_obj.poll_db.check_db_exists(sys_poll_obj.config_args["db_name"]))
 # end
 
 def test_table_created():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   cols = "test_col varchar(255)"
   sys_poll_obj.poll_db.create_table(sys_poll_obj.table_names, cols)
@@ -35,7 +35,7 @@ def test_table_created():
 # end
 
 def test_table_insert():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   pid = list(map(int, sys_poll_obj.get_processes()[0]))
   process_obj = psutil.Process(pid[0])
@@ -63,7 +63,7 @@ def test_table_insert():
 # end
 
 def test_delete_from_table():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   pid = list(map(int, sys_poll_obj.get_processes()[0]))
   process_obj = psutil.Process(pid[0])
@@ -94,14 +94,14 @@ def test_delete_from_table():
 # end
 
 def test_db_dropped():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   sys_poll_obj.poll_db._drop_db(sys_poll_obj.config_args["db_name"])
   assert(not sys_poll_obj.poll_db.check_db_exists(sys_poll_obj.config_args["db_name"]))
 # end
 
 def test_table_dropped():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   cols = "test_col varchar(255)"
   sys_poll_obj.poll_db.create_table(sys_poll_obj.table_names, cols)
@@ -110,7 +110,7 @@ def test_table_dropped():
 # end
 
 def test_id_is_int():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   pid = list(map(int, sys_poll_obj.get_processes()[0]))
   process_obj = psutil.Process(pid[0])
@@ -136,17 +136,17 @@ def test_id_is_int():
 # end
 
 def test_pid_is_int():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   pid = list(map(int, sys_poll_obj.get_processes()[0]))
   process_obj = psutil.Process(pid[0])
   all_process_metric = sys_poll_obj.get_process_metrics([process_obj,
                                                           sys_poll_obj.metrics])
-  assert(type(pid[0]) is int) 
+  assert(type(pid[0]) is int)
 # end
 
 def test_metrics_memory_percent_normalized():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   pid = list(map(int, sys_poll_obj.get_processes()[0]))
   process_obj = psutil.Process(pid[0])
@@ -157,7 +157,7 @@ def test_metrics_memory_percent_normalized():
 # end
 
 def test_metrics_cpu_percent_normalized():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   pid = list(map(int, sys_poll_obj.get_processes()[0]))
   process_obj = psutil.Process(pid[0])
@@ -168,7 +168,7 @@ def test_metrics_cpu_percent_normalized():
 # end
 
 def test_metrics_min_num_threads():
-  args = yaml.load(open("test_sys_poll.yml", "r"))
+  args = yaml.safe_load(open("test_sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args) # will create db
   pid = list(map(int, sys_poll_obj.get_processes()[0]))
   process_obj = psutil.Process(pid[0])
