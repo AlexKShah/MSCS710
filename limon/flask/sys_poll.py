@@ -131,14 +131,7 @@ class Sys_poll():
     pids = list(map(int, self.get_processes()))
     process_objs = [psutil.Process(pid) for pid in pids]
 
-    if self.config_args["process_in_parallel"]:
-      pool = Pool(os.cpu_count(), self.worker_init, [self.queue])
-      all_process_metrics = [process_metrics for process_metrics in pool.map(self.get_process_metrics, list(zip(process_objs, repeat(self.metrics, len(process_objs)))))]
-      pool.close()
-      pool.join()
-      self.queue_listener.stop()
-    else:
-      all_process_metrics = [self.get_process_metrics([process_objs, metrics_])
+    all_process_metrics = [self.get_process_metrics([process_objs, metrics_])
                               for process_objs, metrics_ in list(zip(process_objs, repeat(self.metrics, len(process_objs))))]
     all_process_metrics = pd.DataFrame(all_process_metrics)
 
@@ -162,7 +155,7 @@ class Sys_poll():
 # end
 
 if __name__ == "__main__":
-  args = yaml.load(open("sys_poll.yml", "r"))
+  args = yaml.safe_load(open("sys_poll.yml", "r"))
   sys_poll_obj = Sys_poll(args)
   schedule.every(args["poll_every"]).seconds.do(sys_poll_obj.main)
 
