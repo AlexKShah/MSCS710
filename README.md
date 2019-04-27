@@ -16,13 +16,13 @@ Docker (17+)
 Docker-Compose (1.13+)  
 
 # Installation
+* Setup:
+
+      sudo apt update && sudo apt install -y git docker docker-compose
+      
 * Clone the repository on the machine you want to monitor:
 
       git clone https://github.com/AlexKShah/MSCS710.git; cd MSCS710;
-
-* Setup:
-
-      sudo apt update && sudo apt install -y docker docker-compose
 
 * Build:
 
