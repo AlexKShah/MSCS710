@@ -44,9 +44,5 @@ def index():
     data = Metrics.query.distinct()
     return render_template('index.html', data=data, cpunow=cpunow, ramnow=ramnow)
 
-@app.route('/config.html', methods=['GET', 'POST'])
-def config():
-    return render_template('config.html')
-
 if __name__ == "__main__":
     app.run(host = '0.0.0.0',port=5000,DEBUG=TRUE)
