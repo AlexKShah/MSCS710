@@ -36,16 +36,16 @@
       <table class="table">
         <thead>
             <tr>
-                <th>name</th>
-                <th>pid</th>
-                <th>memory percent</th>
-                <th># threads</th>
+                <th>Name</th>
+                <th>PID</th>
+                <th>Memory %</th>
+                <th>Threads</th>
             <tr>
         </thead>
         <tbody>
             {% for process in data %}
             <tr>
-                <td><b>{{ process.name }}</b></td>
+                <td><i>{{ process.name }}</i></td>
                 <td>{{ process.pid }}</td>
                 <td>{{ process.memory_percent}}%</td>
                 <td>{{ process.num_threads }}</td>
