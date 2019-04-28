@@ -29,7 +29,7 @@ class Metrics(db.Model):
         self.cpu_percent = cpu_percent
         self.memory_percent = memory_percent
         self.name = name
-        self. num_threads = num_threads
+        self.num_threads = num_threads
         self.pid = pid
 
     def __repr__(self):
