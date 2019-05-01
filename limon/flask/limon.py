@@ -39,7 +39,7 @@ class Metrics(db.Model):
 
 @app.route('/')
 def index():
-    cpunow = psutil.cpu_percent(interval=1)
+    cpunow = psutil.cpu_percent(interval=1, percpu=True)
     ramnow = psutil.virtual_memory()[2]
     data = Metrics.query.distinct()
     return render_template('index.html', data=data, cpunow=cpunow, ramnow=ramnow)

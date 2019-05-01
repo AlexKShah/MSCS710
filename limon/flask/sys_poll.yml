@@ -1,6 +1,6 @@
 log_dir: "logs"          # directory name to write logs to
 poll_every: 10           # how often (seconds) to poll system information
-keep_existing: False     # should we keep existing database?
+keep_existing: False      # should we keep existing database?
 db_name: "poll"          # database to write recently polled data
 db_table_name: "metrics" # table to write recently polled data
 db_username: "root"      # database user name
