@@ -19,6 +19,9 @@ from db_utils import Database_obj
 __author__ = "StevenGuarino"
 __version__ = "0.1"
 
+# use mysql datetime format to prevent db insertion errors
+time.strftime('%Y-%m-%d %H:%M:%S')
+
 """
 TODOs:
   * currently not using --time_zone
@@ -49,7 +52,7 @@ class Sys_poll():
     desc: fetch process ids
     returns: pids for all running processes
     """
-    return [pid for pid in os.listdir("/proc") if pid.isdigit()]
+    return [p.pid for p in psutil.process_iter() if isinstance(p.pid, int)]
   # end
 
   def get_process_metrics(self,
@@ -162,7 +165,8 @@ if __name__ == "__main__":
   while True:
     try:
       schedule.run_pending()
-      time.sleep(1)
+      time.sleep(args["poll_every"])
     except Exception as e:
       sys_poll_obj.logger.error(e)
+      time.sleep(args["poll_every"])
       pass
