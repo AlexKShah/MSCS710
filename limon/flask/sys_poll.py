@@ -52,7 +52,7 @@ class Sys_poll():
     desc: fetch process ids
     returns: pids for all running processes
     """
-    return [p.pid for p in psutil.process_iter() if isinstance(p.pid, int)]
+    return [pid for pid in os.listdir("/proc") if pid.isdigit()]
   # end
 
   def get_process_metrics(self,
@@ -67,7 +67,8 @@ class Sys_poll():
     """
     pid, metrics = args
     p_metrics = {metric: getattr(pid, metric)() for metric in metrics if hasattr(pid, metric)}
-    p_metrics["nowtime"] = str(datetime.datetime.now())
+    # p_metrics["cpu_percent"] = getattr(pid, "cpu_percent(interval=1)")() if hasattr(pid, "cpu_percent(interval=1)")
+    p_metrics["nowtime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     p_metrics["pid"] = pid.pid
     return p_metrics
   # end
@@ -165,8 +166,8 @@ if __name__ == "__main__":
   while True:
     try:
       schedule.run_pending()
-      time.sleep(args["poll_every"])
+      time.sleep(1)
     except Exception as e:
+      pass
       sys_poll_obj.logger.error(e)
       time.sleep(args["poll_every"])
-      pass
