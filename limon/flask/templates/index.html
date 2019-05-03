@@ -29,6 +29,8 @@
   </div>
 
   <script type="text/javascript">
+
+    //CPU and RAM chart
     new Chartist.Bar('#chart1', {
       labels: ['CPU 0: {{cpunow[0]}}%', 'CPU 1: {{cpunow[1]}}%', 'CPU 2: {{cpunow[2]}}%','CPU 3: {{cpunow[3]}}%', 'RAM: {{ramnow}}%'],
       series: [
@@ -48,8 +50,10 @@
         });
       }
     });
+
+    //CPU Average chart
     new Chartist.Bar('#chart2', {
-      labels: ['1 min: {{cpuavg[0]}}', '5 min: {{cpuavg[1]}}', '15 min: {{cpuavg[2]}}%'],
+      labels: ['1 min: {{cpuavg[0]}}%', '5 min: {{cpuavg[1]}}%', '15 min: {{cpuavg[2]}}%'],
       series: [
         [ {{cpuavg[0]}}, {{cpuavg[1]}}, {{cpuavg[2]}} ]
       ]
