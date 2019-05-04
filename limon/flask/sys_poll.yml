@@ -7,7 +7,7 @@ db_username: "root"      # database user name
 db_password: "root"      # database password
 db_host: "mysql"         # hostname for the database
 db_port:  3306           # port for the database (3306 is default)
-delete_interval: 60      # how often to remove records (minutes)
+delete_interval: 60      # how often to remove records (seconds)
 ###
 # note: to add more metrics go to https://psutil.readthedocs.io/en/latest/
 # find methods on Process object and add to `metrics` list below

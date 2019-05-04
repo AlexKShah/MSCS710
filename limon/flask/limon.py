@@ -49,8 +49,9 @@ def index():
           ramnow = psutil.virtual_memory()[2]
     except psutil.NoSuchProcess:
         pass
-    time.sleep(1)
-    data = Metrics.query.order_by(Metrics.cpu_percent.desc())
+    data = Metrics.query.all()
+    # give data gathering enough time to not block
+    time.sleep(0.1)
     return render_template('index.html', data=data, cpunow=cpunow, ramnow=ramnow, cpuavg=cpuavg)
 
 if __name__ == "__main__":

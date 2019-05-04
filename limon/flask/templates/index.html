@@ -51,26 +51,20 @@
       }
     });
 
-    //CPU Average chart
-    new Chartist.Bar('#chart2', {
+    //Average load line chart
+    new Chartist.Line('#chart2', {
       labels: ['1 min: {{cpuavg[0]}}%', '5 min: {{cpuavg[1]}}%', '15 min: {{cpuavg[2]}}%'],
       series: [
         [ {{cpuavg[0]}}, {{cpuavg[1]}}, {{cpuavg[2]}} ]
       ]
     }, {
-      stackBars: false,
-      axisY: {
-        labelInterpolationFnc: function(value) {
-          return (value) + '%';
-        }
-      }
-    }).on('draw', function(data) {
-      if(data.type === 'bar') {
-        data.element.attr({
-          style: 'stroke-width: 30px'
-        });
+      fullWidth: false,
+      chartPadding: {
+        left: 10,
+        right: 10
       }
     });
+
   </script>
 
   <div class="container">
@@ -79,8 +73,8 @@
         id="process_table"
         data-toggle="table"
         data-search="true"
-        data-sort-name="pid"
-        data-sort-order="asc">
+        data-sort-name="cpu_percent"
+        data-sort-order="desc">
         <thead>
           <tr>
             <th data-field="name" data-sortable="true">Name</th>
@@ -97,7 +91,7 @@
             <td><i>{{ process.name }}</i></td>
             <td>{{ process.pid }}</td>
             <td>{{ process.cpu_percent }}%</td>
-            <td>{{ process.memory_percent}}%</td>
+            <td>{{ process.memory_percent }}%</td>
             <td>{{ process.num_threads }}</td>
           </tr>
           {% endfor %}

@@ -107,7 +107,7 @@ class Database_obj():
                         table_name: str,
                         delete_interval: int,
                         date_col: str):
-    sql = "DELETE FROM {} WHERE {} < (NOW() - INTERVAL {} MINUTE)".format(table_name,
+    sql = "DELETE FROM {} WHERE {} < (NOW() - INTERVAL {} SECOND)".format(table_name,
                                                                          date_col,
                                                                          delete_interval)
     self.cursor.execute(sql)

@@ -13,8 +13,8 @@ from itertools import repeat
 import schedule
 import time
 import yaml
-
 from db_utils import Database_obj
+import functools
 
 __author__ = "StevenGuarino"
 __version__ = "0.1"
@@ -47,6 +47,21 @@ class Sys_poll():
                                 logger=self.logger)
   # end
 
+
+  def catch_exceptions(cancel_on_failure=False):
+      def catch_exceptions_decorator(job_func):
+          @functools.wraps(job_func)
+          def wrapper(*args, **kwargs):
+              try:
+                  return job_func(*args, **kwargs)
+              except:
+                  import traceback
+                  print(traceback.format_exc())
+                  if cancel_on_failure:
+                      return schedule.CancelJob
+          return wrapper
+      return catch_exceptions_decorator
+
   def get_processes(self):
     """
     desc: fetch process ids
@@ -65,14 +80,22 @@ class Sys_poll():
         metrics: metrics to pull
     returns: dict of metrics for a process id
     """
-    try:
-        pid, metrics = args
-        p_metrics = {metric: getattr(pid, metric)() for metric in metrics if hasattr(pid, metric)}
-        # p_metrics["cpu_percent"] = getattr(pid, "cpu_percent(interval=1)")() if hasattr(pid, "cpu_percent(interval=1)")
-        p_metrics["nowtime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        p_metrics["pid"] = pid.pid
-    except psutil.NoSuchProcess:
-        pass
+    pid, metrics = args
+    #p_metrics = {metric: getattr(pid, metric)() for metric in metrics if hasattr(pid, metric)}
+    #p_metrics["cpu_percent"] = p.cpu_percent(interval=1)
+    p_metrics = {}
+    for metric in metrics:
+      if hasattr(pid, metric):
+        try:
+            if metric == "cpu_percent":
+              p_metrics[metric] = pid.cpu_percent(interval=0.01)
+            else:
+              p_metrics[metric] = getattr(pid, metric)()
+        except psutil.NoSuchProcess:
+            print("PID ded")
+            pass
+    p_metrics["nowtime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    p_metrics["pid"] = getattr(pid, "pid")
     return p_metrics
   # end
 
@@ -130,6 +153,9 @@ class Sys_poll():
     return logger, queue_listener, queue
   # end
 
+  #cancel_on_failure: whether or not to continue main if an exception occurs
+  #set to false otherwise it won't delete after an error inserting
+  @catch_exceptions(cancel_on_failure=False)
   def main(self):
     """
     desc: get system information by process
@@ -138,9 +164,12 @@ class Sys_poll():
     pids = list(map(int, self.get_processes()))
     process_objs = [psutil.Process(pid) for pid in pids]
 
-    all_process_metrics = [self.get_process_metrics([process_objs, metrics_])
-                              for process_objs, metrics_ in list(zip(process_objs, repeat(self.metrics, len(process_objs))))]
+    all_process_metrics = [self.get_process_metrics([process_obj, metrics_])
+                              for process_obj, metrics_ in list(zip(process_objs, repeat(self.metrics, len(process_objs))))]
     all_process_metrics = pd.DataFrame(all_process_metrics)
+
+    if self.poll_db.check_table_exists(self.table_names):
+        self.poll_db._drop_table(self.table_names)
 
     if not self.poll_db.check_table_exists(self.table_names):
       cols = [] # TODO add unique identifier
@@ -155,9 +184,10 @@ class Sys_poll():
     self.poll_db.insert_into_table(self.table_names,
                                    ", ".join(keys),
                                    vals)
-    self.poll_db.delete_from_table(self.table_names,
-                                   "nowtime",
-                                   self.delete_interval)
+    #print(keys)
+    #print(vals)
+    #self.poll_db.delete_from_table(self.table_names,"nowtime",self.delete_interval)
+
   # end
 # end
 
@@ -173,4 +203,3 @@ if __name__ == "__main__":
     except Exception as e:
       pass
       sys_poll_obj.logger.error(e)
-      time.sleep(args["poll_every"])
