@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy
 import os
 import yaml
+import time
 import pathlib
 import datetime
 import psutil
@@ -39,14 +40,18 @@ class Metrics(db.Model):
 
 @app.route('/')
 def index():
-    p = psutil.Process()
-    with p.oneshot():
-      cpunow = psutil.cpu_percent(interval=0.1, percpu=True)
-      psutil.getloadavg()
-      cpuavg=psutil.getloadavg()
-      ramnow = psutil.virtual_memory()[2]
+    try:
+        p = psutil.Process()
+        with p.oneshot():
+          cpunow = psutil.cpu_percent(interval=0.01, percpu=True)
+          psutil.getloadavg()
+          cpuavg=psutil.getloadavg()
+          ramnow = psutil.virtual_memory()[2]
+    except psutil.NoSuchProcess:
+        pass
+    time.sleep(1)
     data = Metrics.query.order_by(Metrics.cpu_percent.desc())
     return render_template('index.html', data=data, cpunow=cpunow, ramnow=ramnow, cpuavg=cpuavg)
 
 if __name__ == "__main__":
-    app.run(host = '0.0.0.0',port=5000,DEBUG=TRUE)
+    app.run(host = '0.0.0.0',port=5000)

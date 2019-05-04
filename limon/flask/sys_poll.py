@@ -65,11 +65,14 @@ class Sys_poll():
         metrics: metrics to pull
     returns: dict of metrics for a process id
     """
-    pid, metrics = args
-    p_metrics = {metric: getattr(pid, metric)() for metric in metrics if hasattr(pid, metric)}
-    # p_metrics["cpu_percent"] = getattr(pid, "cpu_percent(interval=1)")() if hasattr(pid, "cpu_percent(interval=1)")
-    p_metrics["nowtime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    p_metrics["pid"] = pid.pid
+    try:
+        pid, metrics = args
+        p_metrics = {metric: getattr(pid, metric)() for metric in metrics if hasattr(pid, metric)}
+        # p_metrics["cpu_percent"] = getattr(pid, "cpu_percent(interval=1)")() if hasattr(pid, "cpu_percent(interval=1)")
+        p_metrics["nowtime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        p_metrics["pid"] = pid.pid
+    except psutil.NoSuchProcess:
+        pass
     return p_metrics
   # end
 
