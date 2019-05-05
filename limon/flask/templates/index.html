@@ -68,9 +68,9 @@
 
   //Average load line chart
   new Chartist.Line('#chart2', {
-    labels: ['1 min: {{cpuavg[0]}}%', '5 min: {{cpuavg[1]}}%', '15 min: {{cpuavg[2]}}%'],
+    labels: ['15 min: {{cpuavg[2]}}%', '5 min: {{cpuavg[1]}}%', '1 min: {{cpuavg[0]}}%'],
     series: [
-      [ {{cpuavg[0]}}, {{cpuavg[1]}}, {{cpuavg[2]}} ]
+      [ {{cpuavg[2]}}, {{cpuavg[1]}}, {{cpuavg[0]}} ]
     ]
   }, {
     fullWidth: false,
