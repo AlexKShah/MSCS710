@@ -11,7 +11,7 @@ import psutil
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.debug = True
+app.debug = False
 
 #get database parameters from config
 with open("sys_poll.yml", 'r') as configfile:
@@ -45,15 +45,13 @@ def index():
         p = psutil.Process()
         with p.oneshot():
           cpunow = psutil.cpu_percent(interval=0.1, percpu=True)
-          cpunow = psutil.cpu_percent(interval=0.1, percpu=True)
-          cpuavg = psutil.getloadavg()
           cpuavg = psutil.getloadavg()
           ramnow = psutil.virtual_memory()[2]
     except psutil.NoSuchProcess:
         pass
     data = Metrics.query.all()
     # give data gathering enough time to not block
-    time.sleep(1)
+    time.sleep(0.5)
     return render_template('index.html', data=data, cpunow=cpunow, ramnow=ramnow, cpuavg=cpuavg, refresh_interval=refresh_interval)
 
 if __name__ == "__main__":
