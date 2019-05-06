@@ -54,5 +54,9 @@ def index():
     time.sleep(0.5)
     return render_template('index.html', data=data, cpunow=cpunow, ramnow=ramnow, cpuavg=cpuavg, refresh_interval=refresh_interval)
 
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html')
+
 if __name__ == "__main__":
     app.run(host = '0.0.0.0',port=5000)

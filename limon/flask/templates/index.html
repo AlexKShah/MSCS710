@@ -17,11 +17,12 @@
   <script src="{{ url_for('static',filename='dist/jquery.js') }}"></script>
   <script src="{{ url_for('static',filename='dist/b-t.js') }}"></script>
   <div class="text-center container">
+    <h1>Limón</h1>
     <input type="checkbox" onclick="toggleAutoRefresh(this);" id="reloadCB">Auto Refresh</input>
     <div class="ct-chart" id="chart1"></div>
-    <p>CPU/RAM Utilization</p>
+    <p><i>CPU/RAM Utilization</i></p>
     <div class="ct-chart" id="chart2"></div>
-    <p>Load Average</p>
+    <p><i>Load Average</i></p>
   </div>
 
   <script type="text/javascript">
@@ -68,7 +69,7 @@
 
   //Average load line chart
   new Chartist.Line('#chart2', {
-    labels: ['15 min: {{cpuavg[2]}}%', '5 min: {{cpuavg[1]}}%', '1 min: {{cpuavg[0]}}%'],
+    labels: ['15 min: {{cpuavg[2]}}', '5 min: {{cpuavg[1]}}', '1 min: {{cpuavg[0]}}'],
     series: [
       [ {{cpuavg[2]}}, {{cpuavg[1]}}, {{cpuavg[0]}} ]
     ]
