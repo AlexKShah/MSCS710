@@ -13,6 +13,7 @@ services:
     container_name: mysql
     ports: ["3306:3306"]
     environment:
-      #values changed on first run
-      MYSQL_USER: "root"
+      #values NOT changed on first run
+      #mysql deprecated setting root user, removing fixes runtime problem 
+      #MYSQL_USER: "root"
       MYSQL_ROOT_PASSWORD: "root"

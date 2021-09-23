@@ -1,4 +1,7 @@
 #!flask/bin/python
+
+#TODO truncate long percentages [:4] or '{0:.3g}.format(thing)'
+
 from flask import Flask, render_template, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy
@@ -11,7 +14,9 @@ import psutil
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.debug = False
+
+# debug allows changes to this file to reflect in the browser without killing flask
+app.debug = True
 
 #get database parameters from config
 with open("sys_poll.yml", 'r') as configfile:
@@ -35,7 +40,7 @@ class Metrics(db.Model):
         self.pid = pid
 
     def __repr__(self):
-        return '<{} {} {} {} {}>'.format(self.cpu_percent, self.memory_percent, self.name, self.num_threads, self.pid)
+        return '<{0:.3g} {0:.3g} {0:.3g} {0:.3g} {0:.3g}>'.format(self.cpu_percent, self.memory_percent, self.name, self.num_threads, self.pid)
 
 #end class
 

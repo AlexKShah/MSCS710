@@ -1,5 +1,9 @@
 FROM ubuntu:latest
 
+#prevent time zone setup from interrupting installation
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 #Install products and dependencies for mysql, flask, supervisord
 RUN apt-get update -y && \
     apt-get install -y curl libmysqlclient-dev supervisor python3 python3-dev python3-pip python3-venv software-properties-common && \
