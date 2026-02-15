@@ -1,6 +1,8 @@
 # Limón: Linux Monitor
 ### Alex Shah & Steven Guarino
-### MSCS 710 Spring 2019
+### 2019
+
+**Key Concepts** Docker, Python, SQL, Linux, resource management, databases, networking, Flask
 
 ---
 
