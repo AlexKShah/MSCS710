@@ -2,7 +2,7 @@
 ### Alex Shah & Steven Guarino
 ### 2019
 
-**Key Concepts** Docker, Python, SQL, Linux, resource management, databases, networking, Flask
+**Key Concepts** Docker, Python, SQL, Linux, resource management, databases, networking, Flask, Agile
 
 ---
 
